@@ -300,6 +300,79 @@ if (isset($_GET['ubah_barang'])) {
     }
 }
 
+
+if (isset($_GET['restok_barang'])) {
+    session_start();
+
+    $errors = [];
+    $id_barang = $_GET['restok_barang']; // Pengambilan ID melalui url action pada form
+    $id_jenis_barang = $_POST['id_jenis_barang'];
+    $nama_barang = $_POST['nama_barang'];
+    $unit = $_POST['unit'];
+    $harga = $_POST['harga'];
+	$jumlah = $_POST['jumlah'];
+	$tanggal_masuk = $_POST['tanggal_masuk'];
+    $kedaluwarsa = $_POST['kedaluwarsa'];
+
+    if (empty($id_jenis_barang)) {
+        $errors['id_jenis_barang'] = 'Jenis barang wajib dipilih!';
+    }
+
+    if (empty($nama_barang)) {
+        $errors['nama_barang'] = 'Nama barang wajib diisi!';
+    }
+
+    if (empty($unit)) {
+        $errors['unit'] = 'Unit wajib diisi!';
+    }
+
+    if (empty($harga)) {
+        $errors['harga'] = 'Harga wajib diisi!';
+    } elseif (!is_numeric($harga)) {
+        $errors['harga'] = 'Harga harus berupa angka!';
+    }
+
+    if (empty($jumlah)) {
+        $errors['jumlah'] = 'Jumlah wajib diisi!';
+    } elseif (!is_numeric($jumlah)) {
+        $errors['jumlah'] = 'Jumlah harus berupa angka!';
+    }
+	
+	if (empty($tanggal_masuk)) {
+        $errors['tanggal_masuk'] = 'Tanggal masuk barang wajib diisi!';
+    }
+
+    if (empty($kedaluwarsa)) {
+        $errors['kedaluwarsa'] = 'Kedaluwarsa wajib diisi!';
+    }
+
+    if (empty($errors)) {
+        $sql = "UPDATE barang SET 
+                id_jenis_barang='$id_jenis_barang',
+                nama_barang='$nama_barang', 
+                unit='$unit',
+                harga='$harga',
+				jumlah='$jumlah',
+				tanggal_masuk='$tanggal_masuk',
+                kedaluwarsa='$kedaluwarsa'
+                WHERE id_barang='$id_barang'";
+
+        $query = mysqli_query($koneksi, $sql);
+
+        if ($query) {
+            $_SESSION['success'] = "Data berhasil disimpan!";
+        } else {
+            $_SESSION['error'] = "Data gagal disimpan!";
+        }
+        echo "<script>window.location.href = 'media.php?page=data_barang';</script>";
+        exit();
+    } else {
+        $_SESSION['errors'] = $errors;
+        echo "<script>window.location.href = 'media.php?page=restok_barang&&id_barang=$id_barang';</script>";
+        exit();
+    }
+}
+
 if (isset($_GET['hapus_barang'])) {
     session_start();
 
